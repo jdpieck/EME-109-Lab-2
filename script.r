@@ -19,26 +19,37 @@ cylinder_data <- read_csv("cylinder-rotation-data.csv", show_col_types = FALSE) 
   rename(
     pressure_tap_angle = `Prssure Tap Angle (degrees)`,
     cylinder_manometer = `Cylinder Manometer (kPa)`,
-    airspeed_manometer = `Airspeed Manometer (mm)`,
-    measured_drag      = `Measured Drag(N)`
+    airspeed_manometer = `Airspeed Manometer (mmH2O)`,
+    measured_drag      = `Measured Drag (N)`
   ) %>%
 
   mutate(
     pressure_tap_angle = set_units(pressure_tap_angle, "degree"),
     cylinder_manometer = set_units(cylinder_manometer, "kPa"),
-    airspeed_manometer = set_units(airspeed_manometer, "mm"),
+    airspeed_manometer = set_units(airspeed_manometer - 0, "mm"),
     measured_drag      = set_units(measured_drag, "N")
   )
 
-# Convert the units
+# Convert the units for prob1
 cylinder_data$cylinder_manometer <- set_units(cylinder_data$cylinder_manometer, "Pa")
 cylinder_data$airspeed_manometer <- water_density * gravity * cylinder_data$airspeed_manometer
 
-export_df <- data.frame(
-  pressure_tap_angle_deg = drop_units(cylinder_data$pressure_tap_angle),
-  cylinder_manometer_pa  = drop_units(cylinder_data$cylinder_manometer),
-  airspeed_manometer_pa  = drop_units(cylinder_data$airspeed_manometer),
-  measured_drag_n        = drop_units(cylinder_data$measured_drag)
+
+prob_1 <- drop_units(cylinder_data)
+write_json(prob_1, "cylinder_rotation_processed.json", dataframe = "columns", pretty = TRUE)
+
+
+## Prob 2
+
+c_p_exp <- cylinder_data$cylinder_manometer / cylinder_data$airspeed_manometer
+
+angle_rad <- drop_units(cylinder_data$pressure_tap_angle) * pi / 180
+c_p_inv   <- 1 - 4 * (sin(angle_rad))^2
+
+prob_2 <- data.frame(
+pressure_tap_angle = drop_units(cylinder_data$pressure_tap_angle),
+  c_p_exp                = drop_units(c_p_exp),
+  c_p_inv                = c_p_inv
 )
 
-write_json(export_df, "cylinder_rotation_processed.json", dataframe = "columns", pretty = TRUE)
+write_json(prob_2, "c_p.json", dataframe = "columns", pretty = TRUE)

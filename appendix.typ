@@ -42,20 +42,48 @@ Plotting this, we get @prob-1.
     legend: (position: bottom + right),
 
     lq.plot(
-      data.pressure_tap_angle_deg, 
-      data.cylinder_manometer_pa,
+      data.pressure_tap_angle, 
+      data.cylinder_manometer,
       label: [Cylinder Manometer]
     ),
     lq.plot(
-      data.pressure_tap_angle_deg,
-      data.airspeed_manometer_pa,
+      data.pressure_tap_angle,
+      data.airspeed_manometer,
       label: [Airspeed Manometer]
     )
 
   ),
-  caption: [Plot the measured gauge pressures as a function of the angle $theta$ on the cylinder surface.]
+  caption: [Plot of the measured gauge pressures as a function of the angle $theta$ on the cylinder surface.]
 ) <prob-1>
 
+
+=
+
+#let data = json("c_p.json")
+
+#figure(
+  lq.diagram(
+    title: [Experimental and Inviscid Flow Pressure Coefficient vs. Cylinder Angle $theta$],
+    xlabel: [Cylinder Angle $theta$], 
+    ylabel: [Pressure Coefficient ],
+    width: 100%,
+    height: 8cm,
+    legend: (position: bottom + right),
+
+    lq.plot(
+      data.pressure_tap_angle, 
+      data.c_p_exp,
+      label: [Experimental]
+    ),
+    lq.plot(
+      data.pressure_tap_angle,
+      data.c_p_inv,
+      label: [Inviscid]
+    )
+
+  ),
+  caption: [Plot of the experimental and inviscid flow presure coefficients as a function of the angle $theta$ on the cylinder surface.]
+) <prob-2>
 
 = Backend Processing Code <script>
 The following was created based off of the equations provided in the lab manual. The equations were implemented in code with the help of a LLM. 
