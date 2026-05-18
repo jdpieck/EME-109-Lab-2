@@ -17,9 +17,14 @@
   )
   
   show link: it => underline(text(accent.lighten(10%), it))
-  set text(font: "IBM Plex Sans", lang: "en")
 
-   show figure.caption: set text(.9em, fill: accent)
+  set text(
+    11pt,
+    font: "IBM Plex Sans", 
+    lang: "en"
+  )
+
+  show figure.caption: set text(.9em, fill: accent)
   // show figure.caption.where(body: []): it => it.supplement + [ ] + context it.counter.display()
 
   show heading.where(level: 1): set text(fill: accent)
@@ -91,8 +96,9 @@
     numbering: "1", 
     number-align: right, 
     margin: (
-      bottom: .875in,
-      rest: .625in
+      rest: 1in
+      // bottom: .875in,
+      // rest: .625in
     ), 
     height: page-height, 
     width: page-width, 
@@ -107,26 +113,46 @@
   )
   
   place(top, float: true, scope: "parent", {
-    grid(
+      set text(1.2em, weight: "bold")
+      grid(
       columns: (auto, 1fr), 
       align: horizon,
       column-gutter: 1em,
 
       stack(
         spacing: 0.6em, 
-        text(weight: 700, 1.75em, fill: accent, title),
-        text(weight: 300, 1.5em, class),
+        [To: #title],
+        [From: #authors],
       ),
 
       align(right, 
         stack(
-          spacing: 0.6em,
-          text(weight: "bold", authors),
-          link("mailto:" + emails)[#text(.8em)[#emails]],
-          text(weight: 300, .8em, datetime.today().display("[month repr:long] [day], [year]"))
+          spacing: 0.6em, 
+          [Date: #datetime.today().display("[month repr:long] [day], [year]")],
+          [Subject: #class]
         )
       )  
     )
+    // grid(
+    //   columns: (auto, 1fr), 
+    //   align: horizon,
+    //   column-gutter: 1em,
+
+    //   stack(
+    //     spacing: 0.6em, 
+    //     text(weight: 700, 1.75em, fill: accent, title),
+    //     text(weight: 300, 1.5em, class),
+    //   ),
+
+    //   align(right, 
+    //     stack(
+    //       spacing: 0.6em,
+    //       text(weight: "bold", authors),
+    //       link("mailto:" + emails)[#text(.8em)[#emails]],
+    //       text(weight: 300, .8em, datetime.today().display("[month repr:long] [day], [year]"))
+    //     )
+    //   )  
+    // )
 
     v(-.3em)
     line(length: 100%, stroke: .5pt)
@@ -140,14 +166,14 @@
 }
 
 #let appendix(body) = {
-    set heading(numbering: "I.I.", supplement: [Appendix])
+    set heading(numbering: "I.I.", supplement: [Attachment])
     show heading.where(level: 1): set heading(supplement: "Appendix")
     show heading.where(level: 3): set heading(outlined: false)
 
   
   show heading.where(level: 1): it => {
     pagebreak()
-    block[Appendix #counter(heading).display("I -") #it.body]
+    block[Attachment #counter(heading).display("I -") #it.body]
   }
   counter(heading).update(0)
   body
