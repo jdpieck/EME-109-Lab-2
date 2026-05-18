@@ -1,11 +1,12 @@
 #import "template.typ": *
-// #import "@preview/oasis-align:0.3.0": *
+#import "@preview/lilaq:0.6.0" as lq
+#import "@preview/oasis-align:0.3.3": *
+
 #show: template.with(
   title: "Lab #1",
   class: "EME 109",
   page-width: 8.5in,
   page-height: 11in,
-
 )
 ///////////////////////////////////////////////////
 
