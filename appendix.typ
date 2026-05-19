@@ -10,21 +10,25 @@
 //   lang: "r",
 // )
 // 
-= Fs
+= Pressure vs. Angle
 
 From the lab, we recorded the following data.
 
 #let data = csv("cylinder-rotation-data.csv")
 
-#figure(
+#[
+  #set text(.8em)
+  #figure(
   table(
-    columns: 4,
+    columns: (1in, 1in, 1in, 1in),
     ..data.flatten()
   ),
-  caption: [],
+  caption: [Tabulated data recorded from cylinder experiment recorded during lab session.],
 ) <cylinder-data>
 
-To be able to plot the manometer pressures in Pascals against the tap angle, we need to convert the units of the cylinder manometer by multiplying by 1000. To get the airspeed manometer into Pa, we need to use the following equation.
+]
+
+To be able to plot the manometer pressures in Pascals against the tap angle, we need to convert the units of the cylinder manometer by multiplying by 1000. To get the airspeed manometer into Pa, we need to use the following equation to turn the height of water into pressure.
 
 $ P = rho_"water" dot g dot h_"water" $
 
@@ -57,10 +61,27 @@ Plotting this, we get @prob-1.
 ) <prob-1>
 
 
-=
+= Pressure Coefficient vs. Angle
+
+To find the experimental pressure coefficient $C_p$, we use the equation provided to us in the lab manual. 
+$
+  C_p  = (p_s - p_infinity)/(1/2 rho V^2)
+$
+
+The recorded data from the lab already gives us the manometer values in gauge pressure, so we can plug it into the numerator as is. Similarly, the denominator is simply the expanded form of the dynamic pressure which we recorded with the Pitot-static tube. We simply the equation to the following:
+$
+  C_p = frac(P_"cylinder surface", P_"dynamic")
+$
+
+We compare this with the inviscid flow $C_p$ as defined by the following equation:
+$
+  C_p = 1 - 4 sin^2 theta
+$
+// #show figure: set block(breakable: false)
+
+Running the data, we get @prob-2.
 
 #let data = json("c_p.json")
-
 #figure(
   lq.diagram(
     title: [Experimental and Inviscid Flow Pressure Coefficient vs. Cylinder Angle $theta$],
@@ -84,6 +105,12 @@ Plotting this, we get @prob-1.
   ),
   caption: [Plot of the experimental and inviscid flow presure coefficients as a function of the angle $theta$ on the cylinder surface.]
 ) <prob-2>
+
+Comparing the experimental and inviscid coefficients, we can see that they are closely aligned until after 80#sym.degree, where the experimental data peaks earlier before leveling off at about $C_p = -1.0$. The inviscid flow by definition assumes that there is no friction in the flow, hence why the coefficient is able to recover fully after moving about the cylinder. The presence of friction in the experimental creates turbulence after the wake, decreasing the speed of the flow and increasing its pressure. This is what causes the difference in pressure coefficients.   
+
+= Finding Pressure Drag
+
+
 
 = Backend Processing Code <script>
 The following was created based off of the equations provided in the lab manual. The equations were implemented in code with the help of a LLM. 
