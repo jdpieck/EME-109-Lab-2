@@ -167,7 +167,7 @@
 
 #let appendix(body) = {
     set heading(numbering: "I.I.", supplement: [Attachment])
-    show heading.where(level: 1): set heading(supplement: "Appendix")
+    show heading.where(level: 1): set heading(supplement: "Attachment")
     show heading.where(level: 3): set heading(outlined: false)
 
   
