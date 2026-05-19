@@ -32,9 +32,9 @@
 #bibliography("ref.bib", title: "References")
 
 // Provides bibliographical information for any material that is not original and which is cited in the report.
+#outline(title: "List of Attachments", target: heading.where(supplement: [Attachment])) 
 
 #pagebreak()
-#outline(title: "List of Attachments", target: heading.where(supplement: [Appendix])) 
 
 #show: appendix
 #include "appendix.typ"

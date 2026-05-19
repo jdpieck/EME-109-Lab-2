@@ -4,15 +4,15 @@ library(readr)
 library(jsonlite)
 
 temperature     <- set_units(21, "degC")
-pressure        <- set_units(29.94, "inHg")
+pressure        <- set_units(29.94, "mmHg")
 humidity        <- set_units(43, "%")
-air_density     <- set_units(1.225, "kg/m^3")
+air_density     <- set_units(1.200764, "kg/m^3") #adjusted for temp and humidity
 u_infinity      <- set_units(20, "m/s")
 p_delta         <- set_units(245, "Pa")      
 water_density   <- set_units(1000, "kg/m^3")
 gravity         <- set_units(9.81, "m/s^2")
 height_of_water <- set_units(24.97452, "mm")
-height_2        <- set_units(25, "mm")
+# height_2        <- set_units(25, "mm")
 
 
 cylinder_data <- read_csv("cylinder-rotation-data.csv", show_col_types = FALSE) %>%
@@ -80,3 +80,53 @@ given_drag_coef <- 1.2
 F_d = given_drag_coef * air_density / 2 * u_infinity ^2 * cylinder_radius *2 * cylinder_length # table 7-3, page 494
 units(F_d) <- "N"
 print(F_d)
+
+#488
+# prob 7
+library(dplyr)
+library(readr)
+library(units)
+
+pitot_processed <- read_csv("pitot-angle.csv", show_col_types = FALSE) %>%
+  rename(
+    probe_angle_deg      = `Probe Angle (degrees)`,
+    manometer_reading_mm = `Manometer Reading (mmH2O)`
+  ) %>%
+  mutate(
+    # Temporarily tag columns with units for safe physics calculations
+    probe_angle_deg      = set_units(probe_angle_deg, "degree"),
+    manometer_reading_mm = set_units(manometer_reading_mm, "mm"),
+    
+    u_infinity           = sqrt((2 * water_density * gravity * manometer_reading_mm) / air_density),
+    
+    probe_angle_deg      = drop_units(probe_angle_deg),
+    manometer_reading_mm = drop_units(manometer_reading_mm),
+    u_infinity_m_s       = signif(drop_units(u_infinity), 6)
+  ) %>%
+    select(-u_infinity)
+
+u_infinity_std_dev   = sd(pitot_processed$u_infinity_m_s)
+
+
+write_csv(pitot_processed, "pitot_angle_processed.csv")
+print(u_infinity_std_dev)
+# print(pitot_processed)
+
+
+pitot_lateral_processed <- read.csv("pitot-lateral.csv", check.names = FALSE) %>%
+  rename(
+    probe_location       = `Probe Location`,
+    manometer_reading_mm = `Manometer Reading`
+  ) %>%
+  
+  mutate(
+    manometer_reading_mm = set_units(manometer_reading_mm, "mm"),
+    u_infinity           = sqrt((2 * water_density * gravity * manometer_reading_mm) / air_density),
+    
+    probe_location       = signif(probe_location, 4),
+    manometer_reading_mm = signif(drop_units(manometer_reading_mm), 4),
+    u_infinity_m_s       = signif(drop_units(u_infinity), 4)
+  ) %>%
+    select(-u_infinity)
+
+write_json(pitot_lateral_processed, "pitot_lateral_processed.json", dataframe = "columns", pretty = TRUE)
